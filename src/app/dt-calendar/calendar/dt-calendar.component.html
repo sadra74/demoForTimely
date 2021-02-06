@@ -1,0 +1,63 @@
+<header style="  background: linear-gradient(to right, #232526, #414345); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    font-size: calc(2/3 * (0.75vh + 0.75vw));
+    border-bottom: 1px solid #4caf50;
+    position: fixed;
+    z-index: 1;
+    height: 10vh;
+    width: 100%;
+    color: white;">
+  <div
+    style="width: 100%; display: flex; flex-direction: row; padding: 1%; justify-content: center; align-items: center">
+    <label style="flex: 1; margin: 1%">
+      Start Date:
+      <input type="date" style="  border-radius: .5em;" [ngModel]="startDate | date:'yyyy-MM-dd'" (ngModelChange)="startDateChange($event)">
+    </label>
+    <label style="flex: 1; margin: 1%">
+      End Date:
+      <input type="date" style="border-radius: .5em;" [ngModel]="endDate | date:'yyyy-MM-dd'" (ngModelChange)="endDateChange($event)">
+    </label>
+    <label style="flex: 1; margin: 1%">
+      Filter Type:
+      <select class="select-css" [ngModel]="filterType" (ngModelChange)="filterTypeChange($event)">
+        <option *ngFor="let filterType of dtService?.taxonomiesList"
+                [value]="filterType?.display_name">{{filterType?.display_name}}</option>
+      </select>
+    </label>
+    <label style="flex: 1; margin: 1%">
+      Filter:
+      <select class="select-css" *ngIf="visible" [ngModel]="filter" (ngModelChange)="filterChange($event)">
+        <option *ngFor="let filter of filters?.items" [value]="filter?.id">{{filter?.title}}</option>
+        <option [value]="undefined">None</option>
+        <option *ngIf="filters?.next_page_url" value="more" style="color: blue">
+          Load More
+        </option>
+      </select>
+    </label>
+    <button style="width: 10vw; height: 5vh" class="btn-dark" (click)="clearFilter()">Clear Filter</button>
+  </div>
+</header>
+<div style="display: flex;
+  margin-top: 10vh;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;">
+  <div style="margin: 1%; text-align: center;display: block;
+  flex: 0 0 20%" *ngFor="let event of dtService?.eventsList?.items">
+    <ng-container [ngTemplateOutlet]="dayTemplate.template"
+                  [ngTemplateOutletContext]="{context: event}"></ng-container>
+  </div>
+</div>
+<div class="progress" *ngIf="isLoading">
+  <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+</div>
+<footer>
+  <button (click)="loadMore()" *ngIf="!isLoading && dtService?.eventsList?.has_next" type="button"
+          class="btn btn-success btn-lg btn-block" style="margin: 10%">Load More
+  </button>
+
+</footer>
+
+
+
